@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { verifyToken } from './lib/auth'
+import { verifyTokenEdge, verifyTokenBasic } from './lib/auth-edge'
 
 // Define protected routes
 const protectedRoutes = [
@@ -16,11 +16,11 @@ const publicRoutes = [
   '/'
 ]
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   
   console.log('[Middleware] Processing request for:', pathname)
-  console.log('[Middleware] Request headers:', Object.fromEntries(request.headers.entries()))
+  console.log('[Middleware] User-Agent:', request.headers.get('user-agent'))
   
   // Allow API routes (they handle their own auth)
   if (pathname.startsWith('/api/')) {
@@ -51,8 +51,14 @@ export function middleware(request: NextRequest) {
     }
     
     try {
-      // Verify token
-      const decoded = verifyToken(token)
+      // Verify token using Edge Runtime compatible function
+      let decoded = await verifyTokenEdge(token)
+      
+      // Fallback to basic verification if Edge verification fails
+      if (!decoded) {
+        decoded = verifyTokenBasic(token)
+      }
+      
       console.log('[Middleware] Token verification result:', !!decoded)
       
       if (!decoded) {
@@ -83,7 +89,13 @@ export function middleware(request: NextRequest) {
     
     if (token) {
       try {
-        const decoded = verifyToken(token)
+        let decoded = await verifyTokenEdge(token)
+        
+        // Fallback to basic verification if Edge verification fails
+        if (!decoded) {
+          decoded = verifyTokenBasic(token)
+        }
+        
         if (decoded) {
           console.log('[Middleware] Valid token on public route, redirecting to dashboard')
           return NextResponse.redirect(new URL('/dashboard', request.url))
