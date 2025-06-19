@@ -1,6 +1,10 @@
+
 import { NextResponse } from "next/server";
 import { authenticateUser, generateToken } from "@/lib/auth-helpers";
 import { z } from "zod";
+
+// Force this API route to use Node.js runtime instead of Edge Runtime
+export const runtime = 'nodejs';
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),

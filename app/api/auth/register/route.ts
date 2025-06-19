@@ -1,7 +1,11 @@
+
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { createUser } from '@/lib/auth'
 import { getCookieConfig } from '@/lib/utils'
+
+// Force this API route to use Node.js runtime instead of Edge Runtime
+export const runtime = 'nodejs'
 
 const registerSchema = z.object({
   email: z.string().email('Invalid email address'),

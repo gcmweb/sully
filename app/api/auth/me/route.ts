@@ -1,5 +1,9 @@
+
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, getUserById } from '@/lib/auth'
+
+// Force this API route to use Node.js runtime instead of Edge Runtime
+export const runtime = 'nodejs'
 
 export async function GET(request: NextRequest) {
   try {

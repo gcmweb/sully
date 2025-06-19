@@ -1,5 +1,9 @@
+
 import { NextResponse } from "next/server";
 import { verifyToken, getUserById } from "@/lib/auth-helpers";
+
+// Force this API route to use Node.js runtime instead of Edge Runtime
+export const runtime = 'nodejs';
 
 export async function GET(request) {
   try {
@@ -7,7 +11,7 @@ export async function GET(request) {
     
     // Get token from cookie
     const token = request.cookies.get('auth-token')?.value;
-    console.log("[Me API] Token found:", !!token);
+    console.log("[Me API] Auth token found:", !!token);
     
     if (!token) {
       console.log("[Me API] No authentication token found");
@@ -18,8 +22,8 @@ export async function GET(request) {
     }
     
     // Verify token
+    console.log("[Me API] Verifying token...");
     const decoded = verifyToken(token);
-    console.log("[Me API] Token verification result:", !!decoded);
     
     if (!decoded) {
       console.log("[Me API] Invalid authentication token");
@@ -29,7 +33,7 @@ export async function GET(request) {
       );
     }
     
-    console.log("[Me API] Token decoded successfully for user ID:", decoded.userId);
+    console.log("[Me API] Token verified successfully for user:", decoded.userId);
     
     // Get user from database
     const user = await getUserById(decoded.userId);
@@ -42,7 +46,7 @@ export async function GET(request) {
       );
     }
     
-    console.log("[Me API] User found:", { id: user.id, email: user.email, role: user.role });
+    console.log("[Me API] User found and verified:", user.email);
     
     return NextResponse.json({
       success: true,
@@ -50,13 +54,19 @@ export async function GET(request) {
         id: user.id,
         email: user.email,
         name: user.name,
-        role: user.role
+        role: user.role,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
       }
     });
+    
   } catch (error) {
     console.error("[Me API] Get current user error:", error);
     return NextResponse.json(
-      { error: "An error occurred while fetching user data", details: error.message },
+      { 
+        error: "An error occurred while fetching user data",
+        details: error.message
+      },
       { status: 500 }
     );
   }
