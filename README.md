@@ -203,4 +203,4 @@ The application is specifically configured to work with preview domains like `ca
 
 ## License
 
-MIT License - see LICENSE file for details.
+MIT License - see LICENSE file for details.# Build trigger - Thu Jun 19 12:11:09 UTC 2025
