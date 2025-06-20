@@ -1,0 +1,39 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_ENV = "production"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[context.production.environment]
+  DATABASE_URL = "postgresql://neondb_owner:npg_Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8@ep-aged-cloud-a5ql8ql8.us-east-2.aws.neon.tech/neondb?sslmode=require"
+  NEXTAUTH_SECRET = "your-super-secret-nextauth-key-here-make-it-long-and-random-for-production"
+  NEXTAUTH_URL = "https://thunderous-moonbeam-b8c7fa.netlify.app"
+  NODE_ENV = "production"
+
+[context.deploy-preview.environment]
+  DATABASE_URL = "postgresql://neondb_owner:npg_Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8@ep-aged-cloud-a5ql8ql8.us-east-2.aws.neon.tech/neondb?sslmode=require"
+  NEXTAUTH_SECRET = "your-super-secret-nextauth-key-here-make-it-long-and-random-for-production"
+  NEXTAUTH_URL = "https://thunderous-moonbeam-b8c7fa.netlify.app"
+  NODE_ENV = "production"
+
+[context.branch-deploy.environment]
+  DATABASE_URL = "postgresql://neondb_owner:npg_Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8@ep-aged-cloud-a5ql8ql8.us-east-2.aws.neon.tech/neondb?sslmode=require"
+  NEXTAUTH_SECRET = "your-super-secret-nextauth-key-here-make-it-long-and-random-for-production"
+  NEXTAUTH_URL = "https://thunderous-moonbeam-b8c7fa.netlify.app"
+  NODE_ENV = "production"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
